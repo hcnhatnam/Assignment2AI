@@ -1,4 +1,5 @@
-
+import copy
+import time
 # ======================== Class Player =======================================
 class Player:
 	# student do not allow to change two first functions
@@ -15,9 +16,16 @@ class Player:
 	# (row2, col2): new position of selected amazon
 	# (row3, col3): position of the square is shot
 	def nextMove(self, state):
+		ti=Timer(time.time(),3)
 		a=Board(state)
 		board_print(a.board)
 		result = [(0,3),(5,3),(8,6)] # example move in wikipedia
+
+		print("Start"+str(ti.startTime))
+		while not ti.almostExpired():
+			#print(time.time())
+			x=0
+		print("OK"+str(time.time()))
 		return result
 
 def board_print(board):
@@ -32,7 +40,7 @@ def board_print(board):
 
 WQUEEN=1
 BQUEEN=2
-ARRROW=3
+ARROW=3
 FREE=0
 ROW=10
 COLUMN=10
@@ -50,15 +58,16 @@ class Board:
 				if board[i][j]=='.':
 					self.board[i][j]=FREE
 				elif board[i][j]=='X':
-					self.board[i][j]=ARRROW
+					self.board[i][j]=ARROW
 				elif board[i][j]=='b':
 					self.board[i][j]=BQUEEN
 					self.blackPositions.append((i,j))
 				elif board[i][j]=='w':
 					self.board[i][j]=WQUEEN
 					self.whitePositions.append((i,j))
+
 	def copyBoard(self):
-		return self.deepcopy()
+		return copy.deepcopy(self)
 
 	def freeSquare(self,x,y):
 		self.board[x][y]=FREE
@@ -464,3 +473,81 @@ class GameTreeSearch:
 			if (board.isMarked(sX, sY)):
 				return False
 		return True;
+
+class SuccessorGenerator(GameTreeSearch):
+	# Sinh tat ca cac buoc di chuyen co the cua player tu board hien tai
+	def getRelevantActions(self, board:Board, player):
+		moveList = [[],[],[],[]]
+		piece = 0
+		amazons = []
+		if player == 1:
+			amazons = board.getWhitePositions()
+		else:
+			amazons = board.getBlackPositions()
+
+		# Duyet qua tat cac cac con hau cua player
+		for amazon in amazons:
+			fromX = amazon[0]
+			fromY = amazon[1]
+
+			for amazoneMove in self.actions.getActions():
+				# Tao board moi de kiem tra
+				tempBoard = board.copyBoard()
+
+				toX = fromX + amazoneMove[0]
+				toY = fromY + amazoneMove[1]
+
+				# Update vi tri quan co sau khi di chuyen
+				if player == 1:
+					tempBoard.updateWhitePositions(fromX, fromY, toX, toY)
+				else:
+					tempBoard.updateBlackPositions(fromX, fromY, toX, toY)
+
+				# Kiem tra buoc di chuyen hop le
+				if self.moveIsValid(tempBoard, fromX, fromY, toX, toY):
+					tempBoard.freeSquare(fromX, fromY)
+					tempBoard.placeMarker(toX, toY, player)
+
+					# Duyet qua tat ca cac vi tri de ban
+					for arrowspot in self.actions.getArrowThrows():
+						arrowX = toX + arrowspot[0]
+						arrowY = toY + arrowspot[1]
+
+						if self.moveIsValid(tempBoard, toX, toY, arrowX, arrowY):
+							move = [fromX, fromY, toX, toY, arrowX, arrowY]
+							moveList[piece].append(move)
+			piece += 1
+
+		# Sort
+		moveList.sort(key = lambda x: x.__len__())
+
+		# Append tat ca cac buoc di chuyen vao main list
+		orderedMoves = [item for sublist in moveList for item in sublist]
+
+		return orderedMoves
+
+
+	# Ham sinh con: Tao ra 1 board moi sau khi thuc hien mot buoc di chuyen move tu board hien tai
+	def generateSuccessor(self, parent:Board, move, player):
+		child = parent.copyBoard()
+		# Cap nhat lai vi tri
+		child.freeSquare(move[0], move[1])
+		child.placeMarker(move[2], move[3], player)
+		child.placeMarker(move[4], move[5], ARROW)
+
+		# Cap nhat danh sach vi tri moi cua con hau cua player
+		if player == 1:
+			child.updateWhitePositions(move[0], move[1], move[2], move[3])
+		else:
+			child.updateBlackPositions(move[0], move[1], move[2], move[3])
+		return child
+class Timer:
+	def __init__(self,startTime,MAXSEARCHTIME):
+		self.startTime=startTime
+		self.MAXSEARCHTIME=MAXSEARCHTIME
+
+	def almostExpired(self):
+		currentTime = time.time() - self.startTime
+		if currentTime > self.MAXSEARCHTIME:
+			return True
+		return False
