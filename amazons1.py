@@ -18,16 +18,13 @@ class Player:
 	# (row3, col3): position of the square is shot
 	def nextMove(self, state):
 		ti=Timer(time.time(),3)
-		a=Board(state)
-		board_print(a.board)
-		result = [(0,3),(5,3),(8,6)] # example move in wikipedia
-
-		print("Start"+str(ti.startTime))
-		while not ti.almostExpired():
-			#print(time.time())
-			x=0
-		print("OK"+str(time.time()))
-		return result
+		currentBoard=Board(state)
+		moveChoice = []
+		if self.str == 'w':
+			moveChoice = HMinimaxSearch(EvaluationFunction(WQUEEN), ti).alphaBetaSearch(currentBoard, WQUEEN)
+		else:
+			moveChoice = HMinimaxSearch(EvaluationFunction(BQUEEN), ti).alphaBetaSearch(currentBoard, BQUEEN)
+		return moveChoice
 
 def board_print(board):
 
@@ -409,8 +406,8 @@ class Actions:
 		return self.testMoves
 
 class GameTreeSearch:
-	def __int__(self):
-		self.actions = Actions()
+	def __int__(self, actions):
+		self.actions = actions
 
 	def moveIsValid(self,board:Board, sX, sY, dX, dY):
 		if dX < 0 or dX > 9:
@@ -474,9 +471,11 @@ class GameTreeSearch:
 			sY += deltaY
 			if (board.isMarked(sX, sY)):
 				return False
-		return True;
+		return True
 
 class SuccessorGenerator(GameTreeSearch):
+	def __init__(self):
+		super().__init__(Actions())
 	# Sinh tat ca cac buoc di chuyen co the cua player tu board hien tai
 	def getRelevantActions(self, board:Board, player):
 		moveList = [[],[],[],[]]
@@ -630,8 +629,8 @@ class EvaluationFunction:
 		adjustment=0
 		wPositions = board.getWhitePositions()
 		bPositions = board.getBlackPositions()
-		whiteMoves=[]
-		blackMoves=[]
+		whiteMoves=[True,True,True,True]
+		blackMoves=[True,True,True,True]
 		#Kiem tra trap cua qua mau trang
 		for index in range(4):
 			#kiem tra amazon co bi trap khong?
@@ -730,8 +729,12 @@ class HMinimaxSearch:
 					break
 				child = self.scg.generateSuccessor(board, action, player)
 				ALPHA = max(ALPHA, self.alphaBeta(child, 1, False))
-
 				if ALPHA > max:
+					# Update move ordering to put this action at the head of the list
+					potentialActions.remove(action)
+					potentialActions.insert(0,action)
+					#potentialActions = self.moveToFront(potentialActions, action)
+
 					max = ALPHA
 					move = action
 			if self.timer.almostExpired():
@@ -806,4 +809,4 @@ class HMinimaxSearch:
 				self.BETA = min(self.BETA, result)
 			return self.BETA
 
-		
+
