@@ -17,14 +17,18 @@ class Player:
 	# (row2, col2): new position of selected amazon
 	# (row3, col3): position of the square is shot
 	def nextMove(self, state):
-		ti=Timer(time.time(),3)
+		ti=Timer(time.time(),1)
 		currentBoard=Board(state)
 		moveChoice = []
 		if self.str == 'w':
 			moveChoice = HMinimaxSearch(EvaluationFunction(WQUEEN), ti).alphaBetaSearch(currentBoard, WQUEEN)
 		else:
 			moveChoice = HMinimaxSearch(EvaluationFunction(BQUEEN), ti).alphaBetaSearch(currentBoard, BQUEEN)
-		return moveChoice
+		if  not moveChoice:
+			return []
+		else:
+			return [(moveChoice[0],moveChoice[1]),(moveChoice[2],moveChoice[3]),(moveChoice[4],moveChoice[5])]
+
 
 def board_print(board):
 
@@ -75,7 +79,7 @@ class Board:
 		self.board[x][y]=piece
 
 	def isMarked(self,x,y):
-		if self.board[x][y]==FREE:
+		if self.board[int(x)][int(y)]==FREE:
 			return False
 		else:
 			return True
@@ -406,8 +410,11 @@ class Actions:
 		return self.testMoves
 
 class GameTreeSearch:
-	def __int__(self, actions = Actions()):
-		self.actions = actions
+	def __init__(self):
+		self.actions = Actions()
+
+	def getActions(self):
+		return self.actions
 
 	def moveIsValid(self,board:Board, sX, sY, dX, dY):
 		if dX < 0 or dX > 9:
@@ -475,7 +482,7 @@ class GameTreeSearch:
 
 class SuccessorGenerator(GameTreeSearch):
 	def __init__(self):
-		super().__init__()
+		GameTreeSearch.__init__(self)
 	# Sinh tat ca cac buoc di chuyen co the cua player tu board hien tai
 	def getRelevantActions(self, board:Board, player):
 		moveList = [[],[],[],[]]
@@ -491,7 +498,7 @@ class SuccessorGenerator(GameTreeSearch):
 			fromX = amazon[0]
 			fromY = amazon[1]
 
-			for amazoneMove in self.actions.getActions():
+			for amazoneMove in self.getActions().getActions():
 				# Tao board moi de kiem tra
 				tempBoard = board.copyBoard()
 
@@ -695,7 +702,7 @@ class HMinimaxSearch:
 
 
 	def alphaBetaSearch(self, board:Board, player):
-		max  = sys.maxsize
+		maximum = -sys.maxsize-1
 		move = None
 		self.cacheHits = 0
 		self.ourPlayer = player
@@ -728,14 +735,14 @@ class HMinimaxSearch:
 				if self.timer.almostExpired():
 					break
 				child = self.scg.generateSuccessor(board, action, player)
-				ALPHA = max(ALPHA, self.alphaBeta(child, 1, False))
-				if ALPHA > max:
+				self.ALPHA = max(self.ALPHA, self.alphaBeta(child, 1, False))
+				if self.ALPHA > maximum:
 					# Update move ordering to put this action at the head of the list
 					potentialActions.remove(action)
 					potentialActions.insert(0,action)
 					#potentialActions = self.moveToFront(potentialActions, action)
 
-					max = ALPHA
+					maximum = self.ALPHA
 					move = action
 			if self.timer.almostExpired():
 				break

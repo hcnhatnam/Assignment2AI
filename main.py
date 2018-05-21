@@ -81,6 +81,7 @@ def play(student_a, student_b, start_state=Initial_Board):
     board_print(state)
     
     while True:
+
         print("It is ", curr_player, "'s turn")
 
         start = time.time()
