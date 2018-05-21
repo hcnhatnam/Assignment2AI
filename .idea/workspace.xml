@@ -33,11 +33,11 @@
   </component>
   <component name="FileEditorManager">
     <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
-      <file leaf-file-name="main.py" pinned="false" current-in-tab="true">
+      <file leaf-file-name="main.py" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/main.py">
           <provider selected="true" editor-type-id="text-editor">
             <state relative-caret-position="439">
-              <caret line="118" lean-forward="true" selection-start-line="118" selection-end-line="118" />
+              <caret line="118" selection-start-line="118" selection-end-line="118" />
               <folding>
                 <element signature="e#1#11#0" expanded="true" />
               </folding>
@@ -45,19 +45,18 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="amazons.py" pinned="false" current-in-tab="false">
+      <file leaf-file-name="amazons.py" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/amazons.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="4862">
-              <caret line="552" column="20" lean-forward="true" selection-start-line="552" selection-start-column="20" selection-end-line="552" selection-end-column="20" />
+            <state relative-caret-position="409">
+              <caret line="808" column="8" selection-start-line="808" selection-start-column="8" selection-end-line="808" selection-end-column="8" />
               <folding>
                 <element signature="e#0#11#0" expanded="true" />
-                <element signature="e#2377#2458#0" />
-                <element signature="e#2515#2596#0" />
-                <element signature="e#3079#11738#0" />
-                <element signature="e#11864#12699#0" />
-                <element signature="e#12762#12952#0" />
-                <element signature="e#13014#13211#0" />
+                <element signature="e#119#878#0" />
+                <element signature="e#3260#11919#0" />
+                <element signature="e#11944#13392#0" />
+                <element signature="e#13437#15491#0" />
+                <element signature="e#15791#17766#0" />
               </folding>
             </state>
           </provider>
@@ -80,6 +79,10 @@
       <find>{</find>
       <find>add</find>
       <find>RRR</find>
+      <find>EvaluationFunction</find>
+      <find>has</find>
+      <find>qual</find>
+      <find>transitionTable</find>
     </findStrings>
     <replaceStrings>
       <replace>self.</replace>
@@ -115,6 +118,8 @@
       <foldersAlwaysOnTop value="true" />
     </navigator>
     <panes>
+      <pane id="PackagesPane" />
+      <pane id="AndroidView" />
       <pane id="ProjectPane">
         <subPane>
           <expand>
@@ -126,9 +131,7 @@
           <select />
         </subPane>
       </pane>
-      <pane id="PackagesPane" />
       <pane id="Scope" />
-      <pane id="AndroidView" />
     </panes>
   </component>
   <component name="PropertiesComponent">
@@ -279,11 +282,13 @@
       <workItem from="1526440018552" duration="6431000" />
       <workItem from="1526457450443" duration="5312000" />
       <workItem from="1526478309687" duration="7157000" />
+      <workItem from="1526519139455" duration="57000" />
+      <workItem from="1526865634875" duration="10492000" />
     </task>
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="18900000" />
+    <option name="totallyTimeSpent" value="29449000" />
   </component>
   <component name="ToolWindowManager">
     <frame x="-8" y="-8" width="1382" height="754" extended-state="6" />
@@ -302,7 +307,7 @@
       <window_info anchor="bottom" id="Terminal" order="7" weight="0.329582" />
       <window_info id="Capture Tool" order="2" />
       <window_info id="Designer" order="2" />
-      <window_info content_ui="combo" id="Project" order="0" visible="true" weight="0.25718608" />
+      <window_info content_ui="combo" id="Project" order="0" weight="0.26096824" />
       <window_info anchor="right" id="Database" order="3" weight="0.32980332" />
       <window_info anchor="right" id="SciView" order="3" />
       <window_info id="Structure" order="1" side_tool="true" weight="0.25" />
@@ -340,6 +345,56 @@
   <component name="editorHistoryManager">
     <entry file="file://$PROJECT_DIR$/main.py">
       <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="2574">
+          <caret line="118" selection-start-line="118" selection-end-line="118" />
+          <folding>
+            <element signature="e#1#11#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/amazons.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="12144">
+          <caret line="552" column="20" selection-start-line="552" selection-start-column="20" selection-end-line="552" selection-end-column="20" />
+          <folding>
+            <element signature="e#0#11#0" expanded="true" />
+            <element signature="e#119#878#0" />
+            <element signature="e#3260#11919#0" />
+            <element signature="e#11944#13392#0" />
+            <element signature="e#13437#15491#0" />
+            <element signature="e#15791#17766#0" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/main.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="2596">
+          <caret line="118" lean-forward="true" selection-start-line="118" selection-end-line="118" />
+          <folding>
+            <element signature="e#1#11#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/amazons.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="12144">
+          <caret line="552" column="20" lean-forward="true" selection-start-line="552" selection-start-column="20" selection-end-line="552" selection-end-column="20" />
+          <folding>
+            <element signature="e#0#11#0" expanded="true" />
+            <element signature="e#119#878#0" />
+            <element signature="e#3260#11919#0" />
+            <element signature="e#11944#13392#0" />
+            <element signature="e#13437#15491#0" />
+            <element signature="e#15791#17766#0" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/main.py">
+      <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="220">
           <caret line="10" column="21" selection-start-line="5" selection-end-line="17" selection-end-column="13" />
           <folding>
@@ -354,12 +409,11 @@
           <caret line="399" column="21" lean-forward="true" selection-start-line="399" selection-start-column="21" selection-end-line="399" selection-end-column="21" />
           <folding>
             <element signature="e#0#11#0" expanded="true" />
-            <element signature="e#2377#2458#0" />
-            <element signature="e#2515#2596#0" />
-            <element signature="e#3079#11738#0" />
-            <element signature="e#11864#12699#0" />
-            <element signature="e#12762#12952#0" />
-            <element signature="e#13014#13211#0" />
+            <element signature="e#119#878#0" />
+            <element signature="e#3260#11919#0" />
+            <element signature="e#11944#13392#0" />
+            <element signature="e#13437#15491#0" />
+            <element signature="e#15791#17766#0" />
           </folding>
         </state>
       </provider>
@@ -377,40 +431,38 @@
           <caret line="116" column="34" selection-start-line="116" selection-start-column="34" selection-end-line="116" selection-end-column="34" />
           <folding>
             <element signature="e#0#11#0" expanded="true" />
-            <element signature="e#2377#2458#0" />
-            <element signature="e#2515#2596#0" />
-            <element signature="e#3079#11738#0" />
-            <element signature="e#11864#12699#0" />
-            <element signature="e#12762#12952#0" />
-            <element signature="e#13014#13211#0" />
+            <element signature="e#119#878#0" />
+            <element signature="e#3260#11919#0" />
+            <element signature="e#11944#13392#0" />
+            <element signature="e#13437#15491#0" />
+            <element signature="e#15791#17766#0" />
           </folding>
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/test.py" />
     <entry file="file://$PROJECT_DIR$/test.py" />
-    <entry file="file://$PROJECT_DIR$/amazons.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="4862">
-          <caret line="552" column="20" lean-forward="true" selection-start-line="552" selection-start-column="20" selection-end-line="552" selection-end-column="20" />
-          <folding>
-            <element signature="e#0#11#0" expanded="true" />
-            <element signature="e#2377#2458#0" />
-            <element signature="e#2515#2596#0" />
-            <element signature="e#3079#11738#0" />
-            <element signature="e#11864#12699#0" />
-            <element signature="e#12762#12952#0" />
-            <element signature="e#13014#13211#0" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/main.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="439">
-          <caret line="118" lean-forward="true" selection-start-line="118" selection-end-line="118" />
+          <caret line="118" selection-start-line="118" selection-end-line="118" />
           <folding>
             <element signature="e#1#11#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/amazons.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="409">
+          <caret line="808" column="8" selection-start-line="808" selection-start-column="8" selection-end-line="808" selection-end-column="8" />
+          <folding>
+            <element signature="e#0#11#0" expanded="true" />
+            <element signature="e#119#878#0" />
+            <element signature="e#3260#11919#0" />
+            <element signature="e#11944#13392#0" />
+            <element signature="e#13437#15491#0" />
+            <element signature="e#15791#17766#0" />
           </folding>
         </state>
       </provider>

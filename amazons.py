@@ -1,5 +1,6 @@
 import copy
 import time
+import sys
 # ======================== Class Player =======================================
 class Player:
 	# student do not allow to change two first functions
@@ -139,6 +140,7 @@ class Board:
 
 	def hashCode(self):
 		return hash(str(self.board))
+
 class Actions:
 	def __init__(self):
 		self.leftOne = [ -1, 0 ]
@@ -541,6 +543,7 @@ class SuccessorGenerator(GameTreeSearch):
 		else:
 			child.updateBlackPositions(move[0], move[1], move[2], move[3])
 		return child
+
 class Timer:
 	def __init__(self,startTime,MAXSEARCHTIME):
 		self.startTime=startTime
@@ -551,3 +554,256 @@ class Timer:
 		if currentTime > self.MAXSEARCHTIME:
 			return True
 		return False
+
+class EvaluationFunction:
+	def __init__(self,role):
+		self.actions=Actions()
+		self.OURCOLOUR=role
+		self.OPPONENT=0
+		if self.OURCOLOUR == WQUEEN:
+			self.OPPONENT = BQUEEN
+		else:
+			self.OPPONENT = WQUEEN
+		self.search=GameTreeSearch()
+	def evaluate(self,board,player):
+		wUtility=0
+		bUtility=0
+
+		wPositions=board.getWhitePositions()
+		bPositions=board.getBlackPositions()
+
+		wDistanceTable=[[sys.maxsize for i in range(COLUMN)] for j in range(ROW)]
+		bDistanceTable=[[sys.maxsize for i in range(COLUMN)] for j in range(ROW)]
+
+		for pair in wPositions:
+				wDistanceTable[pair[0]][pair[1]]=-1
+
+		for pair in bPositions:
+			bDistanceTable[pair[0]][pair[1]]=-1
+
+		self.findDistances(board, WQUEEN, wDistanceTable)
+		self.findDistances(board, BQUEEN, bDistanceTable)
+		for indexRow in range(ROW):
+			for indexColumn in range(COLUMN):
+				if wDistanceTable[indexRow][indexColumn]>bDistanceTable[indexRow][indexColumn]:
+					bUtility+=1
+				if wDistanceTable[indexRow][indexColumn]<bDistanceTable[indexRow][indexColumn]:
+					wUtility+=1
+		adjustment = self.adjustForIsolatedPieces(board)
+		if player == 1:
+			return wUtility + adjustment - bUtility
+		else:
+			return bUtility + adjustment - wUtility
+	#Tinh toan khoang cach
+	def findDistances(seft,board:Board, player, distanceTable):
+		positions=[]
+		queue=[]
+		if player==WQUEEN:
+			positions=board.getWhitePositions()
+		else:
+			positions=board.getBlackPositions()
+
+		for pair in positions:
+			queue.append(pair)
+
+		while not queue:
+			top=queue.pop(0)
+			xPos=top[0]
+			yPos=top[1]
+			for action in seft.actions:
+				currentDistance = distanceTable[xPos][yPos]
+				if currentDistance == -1:
+					currentDistance = 0
+				newX=xPos+action[0]
+				newY=yPos+action[1]
+				if (newX > 9 or newX < 0) or (newY > 9 or newY < 0):
+					continue
+
+				currentDistance+=1
+				if not board.isMarked(newX,newY):
+					if seft.search.moveIsValid(board,xPos,yPos,newX,newY):
+						if distanceTable[newX][newY]>currentDistance:
+							distanceTable[newX][newY]=currentDistance
+							queue.insert(0,(newX,newY))
+	#Tao he so dieu chinh de +- vao ham luong gia(evaluate)
+	def adjustForIsolatedPieces(self,board):
+		adjustment=0
+		wPositions = board.getWhitePositions()
+		bPositions = board.getBlackPositions()
+		whiteMoves=[]
+		blackMoves=[]
+		#Kiem tra trap cua qua mau trang
+		for index in range(4):
+			#kiem tra amazon co bi trap khong?
+			if not  board.whitePieceTrapped(wPositions[index][0],wPositions[index][1]):
+				whiteMoves[index]=self.canMove(board,wPositions[index])
+				if not whiteMoves[index]:
+					board.addWhiteTrappedPiece()
+
+		#Kiem tra trap cua qua mau den
+		for index in range(4):
+			#kiem tra amazon co bi trap khong?
+			if not  board.blackPieceTrapped(bPositions[index][0],bPositions[index][1]):
+				blackMoves[index]=self.canMove(board,bPositions[index])
+				if not blackMoves[index]:
+					board.addBlackTrappedPiece()
+
+		if self.OURCOLOUR == WQUEEN:
+			for b in whiteMoves:
+				if not b:
+					adjustment -= 2
+			for b in blackMoves:
+				if not b:
+					adjustment += 2
+		else:
+			for b in whiteMoves:
+				if not b:
+					adjustment += 2
+			for b in blackMoves:
+				if not b:
+					adjustment -= 2
+		return adjustment
+
+	#Kiem tra quan co amzon co the di chuyen hay khong
+	def canMove(self,board:Board,amazon):
+		moves=self.actions.getSimpleMoves()
+		for step in moves:
+			testX=amazon[0]+step[0]
+			testY=amazon[1]+step[1]
+			if (testX >= 0 and testX < 10) and (testY >= 0 and testY < 10):
+				return True
+			if not board.isMarked(testX, testY):
+				return True
+		return False
+
+class HMinimaxSearch:
+	def __init__(self, evaluator: EvaluationFunction, timer:Timer):
+		self.evaluator = evaluator
+		self.DEPTH = None
+		self.ourPlayer = None
+		self.opponent = None
+		self.scg = SuccessorGenerator()
+		self.timer = timer
+		self.ABSOLUTEDEPTH = 12
+		self.tableSize = 0
+		self.moveCount = 0
+		self.ALPHA = -sys.maxsize -1
+		self.BETA = sys.maxsize
+		# Since there are so many collisions we can store a list, check each pair
+		self.transitionTable = dict()
+		self.cacheHits = 0
+		self.ties = []
+
+
+	def alphaBetaSearch(self, board:Board, player):
+		max  = sys.maxsize
+		move = None
+		self.cacheHits = 0
+		self.ourPlayer = player
+		if self.ourPlayer == 1:
+			self.opponent = 2
+		else:
+			self.opponent = 1
+
+		if self.tableSize > 2000000:
+			self.transitionTable.clear()
+			self.tableSize = 0
+
+		board.clearWhiteTrapMap()
+		board.clearBlackTrapMap()
+
+
+		self.evaluator.adjustForIsolatedPieces(board)
+		self.DEPTH = 1
+		searchDepth = self.DEPTH
+
+		potentialActions = self.scg.getRelevantActions(board, player)
+		while not self.timer.almostExpired():
+			self.ALPHA = - sys.maxsize - 1
+			self.BETA = sys.maxsize
+
+			if potentialActions.__len__() == 0:
+				break
+
+			for action in potentialActions:
+				if self.timer.almostExpired():
+					break
+				child = self.scg.generateSuccessor(board, action, player)
+				ALPHA = max(ALPHA, self.alphaBeta(child, 1, False))
+
+				if ALPHA > max:
+					max = ALPHA
+					move = action
+			if self.timer.almostExpired():
+				break
+			if self.moveCount < 9:
+				break
+
+			searchDepth = self.DEPTH
+			self.DEPTH += 1
+			if self.DEPTH > self.ABSOLUTEDEPTH:
+				break
+
+		self.moveCount += 1
+		#if potentialActions.__len__() == 0:
+			#print("No possible moves from this state, player loses.")
+
+		self.cacheHits = 0
+		self.ties.clear()
+		#print("Alpha-Beta result: [" + str(ALPHA) + "," + str(BETA) + "]")
+		#print("Got to depth: " + str(searchDepth))
+		return move
+
+	def alphaBeta(self, board:Board, searchDepth, maxNode):
+		# Terminal nodes in search tree or at max depth we evaluate the board
+		if searchDepth == self.DEPTH or self.timer.almostExpired():
+			hash = board.hashCode()
+			if hash in self.transitionTable:
+				bucket = self.transitionTable.get(hash)
+				for collision in bucket:
+					if board.getBoard() == collision:
+						self.cacheHits += 1
+						return collision.getHeuristicValue()
+				value = self.evaluator.evaluate(board, self.ourPlayer)
+				board.setHeuristicValue(value)
+				bucket.append(board)
+				self.tableSize += 1
+				return value
+
+			value = self.evaluator.evaluate(board, self.ourPlayer)
+			board.setHeuristicValue(value)
+			bucket = [board]
+			self.transitionTable[board.hashCode()] = bucket
+			self.tableSize += 1
+			return value
+
+		if maxNode:
+			potentialActions = self.scg.getRelevantActions(board, self.ourPlayer)
+			if potentialActions.__len__() == 0:
+				return -sys.maxsize - 1
+			for action in potentialActions:
+				child = self.scg.generateSuccessor(action, self.ourPlayer)
+				result = self.alphaBeta(child, searchDepth+1, False)
+				if self.timer.almostExpired():
+					return max(self.ALPHA, result)
+				if result >= self.BETA:
+					return result
+
+				self.ALPHA = max(self.ALPHA, result)
+			return self.ALPHA
+		else:
+			potentialActions = self.scg.getRelevantActions(board, self.opponent)
+			if potentialActions.__len__() == 0:
+				return sys.maxsize
+			for action in potentialActions:
+				child = self.scg.generateSuccessor(action, self.opponent)
+				result = self.alphaBeta(child, searchDepth+1, True)
+				if self.timer.almostExpired():
+					return min(self.BETA, result)
+				if result <= self.ALPHA:
+					return result
+
+				self.BETA = min(self.BETA, result)
+			return self.BETA
+
+		
